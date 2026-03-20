@@ -3,26 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MiniBet Uz | Pro Audio Edition</title>
+    <title>MiniBet Uz | Official</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --bg: #090e14; --panel: #151a21; --accent: #007aff; --win: #22c55e; --red: #ff3b30; }
-        body { background: var(--bg); color: white; font-family: -apple-system, sans-serif; margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+        body { background: var(--bg); color: white; font-family: -apple-system, sans-serif; margin: 0; padding: 0; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
         .hidden { display: none !important; }
         header { background: var(--panel); padding: 15px; display: flex; justify-content: space-between; border-bottom: 1px solid #232a35; }
         #main-container { flex: 1; overflow-y: auto; padding: 15px; }
 
-        /* Aviator Design */
+        /* Aviator Board */
         #crash-area { background: #000; height: 220px; border-radius: 15px; position: relative; overflow: hidden; border: 2px solid #232a35; background: radial-gradient(circle at bottom left, #1a1a2e, #090e14); }
         #rocket { position: absolute; bottom: 20px; left: 20px; font-size: 35px; z-index: 10; }
         #crash-mult { position: absolute; top: 40%; left: 50%; transform: translate(-50%, -50%); font-size: 50px; font-weight: 900; z-index: 20; color: var(--win); }
 
-        /* Live Bets List */
-        .live-bets-container { margin-top: 15px; background: var(--panel); border-radius: 12px; padding: 10px; font-size: 11px; max-height: 200px; overflow-y: hidden; }
-        .bet-row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #232a35; animation: slideIn 0.3s ease-out; }
+        /* Live Bets */
+        .live-bets-container { margin-top: 15px; background: var(--panel); border-radius: 12px; padding: 10px; font-size: 11px; }
+        .bet-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #232a35; }
         .status-win { color: var(--win); font-weight: bold; }
         .status-lose { color: var(--red); }
-        @keyframes slideIn { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: translateX(0); } }
 
         /* Mines */
         .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-top: 15px; }
@@ -38,7 +37,12 @@
         button:active { transform: scale(0.96); }
     </style>
 </head>
-<body>
+<body onclick="enableAudio()">
+
+<audio id="snd-click" src="https://www.soundjay.com/buttons/button-16.mp3"></audio>
+<audio id="snd-win" src="https://www.myinstants.com/media/sounds/level-up-video-game.mp3"></audio>
+<audio id="snd-boom" src="https://www.soundjay.com/free-music/sounds/explosion-01.mp3"></audio>
+<audio id="snd-fly" src="https://www.soundjay.com/mechanical/sounds/jet-engine-take-off-1.mp3" loop></audio>
 
 <header>
     <div style="font-weight: 900; color: #ffcc00;">MINIBET UZ</div>
@@ -54,56 +58,38 @@
     </div>
 
     <div id="crash-view" class="hidden">
-        <div id="crash-area">
-            <div id="crash-mult">1.00x</div>
-            <div id="rocket">🚀</div>
-        </div>
+        <div id="crash-area"><div id="crash-mult">1.00x</div><div id="rocket">🚀</div></div>
         <div style="display:flex; gap:10px; margin: 15px 0;">
-            <input type="number" id="crash-bet" value="1000" style="flex:1; padding:15px; background:var(--panel); border:1px solid #334155; color:white; border-radius:10px;">
+            <input type="number" id="crash-bet" value="1000" style="flex:1; padding:15px; background:var(--panel); color:white; border-radius:10px; border:1px solid #334155;">
             <button id="crash-btn" onclick="startCrash()" style="flex:1; background:var(--win); color:white;">TIKISH</button>
         </div>
-        <div class="live-bets-container" id="live-list">
-            <div style="color:#8e8e93; margin-bottom:8px; display:flex; justify-content:space-between;">
-                <span>ID</span><span>Stavka</span><span>Holat</span>
-            </div>
-            <div id="bets-content"></div>
-        </div>
+        <div class="live-bets-container"><div id="bets-content"></div></div>
     </div>
 
     <div id="mines-view" class="hidden">
         <div style="display:flex; justify-content:space-between; margin-bottom:10px; color:var(--win); font-weight:bold;">
-            <span>Koeff: <span id="m-mult">x1.00</span></span>
-            <span>Yutuq: <span id="m-win">0</span></span>
+            <span>Koeff: <span id="m-mult">x1.00</span></span><span>Yutuq: <span id="m-win">0</span></span>
         </div>
         <div id="mines-grid" class="grid"></div>
-        <div style="margin-top:15px;">
-            <input type="number" id="mines-bet" value="1000" style="width:100%; padding:15px; background:var(--panel); border:1px solid #334155; color:white; border-radius:10px; margin-bottom:10px;">
-            <button id="mines-main-btn" onclick="startMines()" style="width:100%; padding:15px; background:var(--accent); color:white;">BOSHLASH</button>
-        </div>
+        <button id="mines-main-btn" onclick="startMines()" style="width:100%; padding:15px; background:var(--accent); color:white; margin-top:15px;">BOSHLASH</button>
     </div>
 </main>
 
 <footer>
     <div class="nav-item active-nav" onclick="showTab('lobby')">🏠<br>Lobbi</div>
-    <div class="nav-item" onclick="alert('Bonus tizimi 24soatlik!')">🎁<br>Bonus</div>
+    <div class="nav-item" onclick="showTab('lobby')">🎁<br>Bonus</div>
     <div class="nav-item" onclick="showTab('lobby')">👤<br>Profil</div>
 </footer>
 
 <script>
-    let balance = 32000; // Test balans
+    let balance = 50000;
     let isPlaying = false;
     let crashInt;
+    let audioEnabled = false;
 
-    // --- AUDIO SYSTEM ---
-    const sounds = {
-        click: new Audio('https://www.soundjay.com/buttons/button-16.mp3'),
-        win: new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.mp3'),
-        boom: new Audio('https://www.soundjay.com/free-music/sounds/explosion-01.mp3'),
-        fly: new Audio('https://www.soundjay.com/mechanical/sounds/jet-engine-take-off-1.mp3')
-    };
-    sounds.fly.loop = true;
-
-    function playSound(name) { try { sounds[name].currentTime = 0; sounds[name].play(); } catch(e){} }
+    function enableAudio() { if(!audioEnabled) { audioEnabled = true; playSnd('snd-click'); } }
+    function playSnd(id) { if(audioEnabled) { let a = document.getElementById(id); a.currentTime = 0; a.play(); } }
+    function stopSnd(id) { let a = document.getElementById(id); a.pause(); }
 
     function updateUI() { document.getElementById('balance-display').innerText = balance.toLocaleString() + " UZS"; }
     updateUI();
@@ -112,99 +98,78 @@
         ['lobby', 'crash', 'mines'].forEach(t => document.getElementById(t + '-view').classList.add('hidden'));
         document.getElementById(tab + '-view').classList.remove('hidden');
     }
-    function openGame(g) { playSound('click'); showTab(g); if(g==='mines') initMines(); }
+    function openGame(g) { playSnd('snd-click'); showTab(g); if(g==='mines') initMines(); }
 
-    // --- LIVE BETS RANDOMIZER ---
-    function generateLiveBets(gameActive, currentMult = 1.0) {
+    // --- REALISTIC LIVE BETS ---
+    function updateBets(active, mult = 1.0) {
         const content = document.getElementById('bets-content');
-        content.innerHTML = '';
-        for(let i=0; i<8; i++) {
-            let id = Math.floor(100000 + Math.random() * 900000);
-            let amount = (Math.floor(Math.random() * 50) + 1) * 1000;
-            let statusText = "Kutilmoqda...";
-            let statusClass = "";
-
-            if(!gameActive) {
-                let win = Math.random() > 0.4;
-                if(win) {
-                    let m = (Math.random() * 2 + 1.1).toFixed(2);
-                    statusText = m + "x yutdi";
-                    statusClass = "status-win";
-                } else {
-                    statusText = "Kuydi";
-                    statusClass = "status-lose";
-                }
-            } else {
-                if(currentMult > 1.5 && Math.random() > 0.7) {
-                    statusText = currentMult.toFixed(2) + "x yechdi";
-                    statusClass = "status-win";
-                }
-            }
-
-            content.innerHTML += `<div class="bet-row">
-                <span>ID:${id}</span><span>${amount.toLocaleString()}</span><span class="${statusClass}">${statusText}</span>
-            </div>`;
+        content.innerHTML = '<div style="color:#8e8e93; display:flex; justify-content:space-between; margin-bottom:10px;"><span>ID</span><span>Stavka</span><span>Holat</span></div>';
+        for(let i=0; i<7; i++) {
+            let id = 300000 + (i * 14567 % 600000);
+            let b = (i + 1) * 3000;
+            let status = "Kutilmoqda..."; let cl = "";
+            let cashoutPoint = 1.2 + (i * 0.4);
+            if(active && mult >= cashoutPoint) { status = cashoutPoint.toFixed(2) + "x yutdi"; cl = "status-win"; }
+            else if(!active) { if(Math.random() > 0.5) { status = (1.1+Math.random()).toFixed(2) + "x yutdi"; cl = "status-win"; } else { status = "Kuydi"; cl = "status-lose"; } }
+            content.innerHTML += `<div class="bet-row"><span>ID:${id}</span><span>${b}</span><span class="${cl}">${status}</span></div>`;
         }
     }
 
-    // --- AVIATOR (CRASH) ---
+    // --- AVIATOR LOGIC ---
     function startCrash() {
         let b = parseFloat(document.getElementById('crash-bet').value);
         if(b > balance || isPlaying) return;
         
         balance -= b; updateUI(); isPlaying = true;
         let cMult = 1.0;
-        playSound('fly');
-
-        // 1.00x PORTLASH EHTIMOLI (Har 10 o'yindan birida yoki 10% imkoniyat)
-        let isInstantCrash = Math.random() < 0.10; 
-        let crashAt = isInstantCrash ? 1.00 : (Math.random() * 4 + 1.05).toFixed(2);
-
+        playSnd('snd-fly');
+        
+        let crashAt = (Math.random() < 0.15) ? 1.00 : (1.05 + Math.random() * 4).toFixed(2);
         let btn = document.getElementById('crash-btn');
         btn.style.background = "#ffcc00"; btn.style.color = "black";
-        btn.innerText = "OLISH (1.00x)";
         btn.onclick = () => { cashoutCrash(b, cMult); };
 
         crashInt = setInterval(() => {
             if(cMult >= crashAt) {
-                clearInterval(crashInt);
-                sounds.fly.pause(); playSound('boom');
+                // !!! MUHIM: PORTLASH SODIR BO'LGANDA BIRINCHI NAVBATDA TUGMANI O'CHIRAMIZ !!!
+                isPlaying = false;
+                btn.onclick = null; // Tugmani bosishni to'xtatamiz
+                
+                clearInterval(crashInt); stopSnd('snd-fly'); playSnd('snd-boom');
                 document.getElementById('crash-mult').style.color = "red";
                 document.getElementById('crash-mult').innerText = "BOOM!";
-                generateLiveBets(false);
+                updateBets(false);
                 setTimeout(resetCrash, 2500);
                 return;
             }
             cMult += 0.01;
             document.getElementById('crash-mult').innerText = cMult.toFixed(2) + "x";
-            document.getElementById('rocket').style.bottom = (20 + (cMult-1)*45) + "px";
-            document.getElementById('rocket').style.left = (20 + (cMult-1)*65) + "px";
+            document.getElementById('rocket').style.transform = `translate(${(cMult-1)*70}px, -${(cMult-1)*45}px)`;
             btn.innerText = "OLISH " + (b * cMult).toFixed(0);
-            generateLiveBets(true, cMult);
+            updateBets(true, cMult);
         }, 80);
     }
 
     function cashoutCrash(b, m) {
-        if(!isPlaying) return;
-        clearInterval(crashInt); sounds.fly.pause(); playSound('win');
+        if(!isPlaying) return; // Agar portlagan bo'lsa, funksiya ishlamaydi
+        isPlaying = false;
+        clearInterval(crashInt); stopSnd('snd-fly'); playSnd('snd-win');
         let w = Math.floor(b * m); balance += w; updateUI();
-        alert("YUTUQ: " + w + " UZS");
-        resetCrash();
+        alert("YUTUQ: " + w); resetCrash();
     }
 
     function resetCrash() {
-        isPlaying = false;
         let btn = document.getElementById('crash-btn');
         btn.style.background = "var(--win)"; btn.style.color = "white";
         btn.innerText = "TIKISH"; btn.onclick = startCrash;
         document.getElementById('crash-mult').style.color = "var(--win)";
-        document.getElementById('rocket').style.bottom = "20px"; document.getElementById('rocket').style.left = "20px";
+        document.getElementById('rocket').style.transform = "none";
         document.getElementById('crash-mult').innerText = "1.00x";
     }
 
-    // --- MINES ---
+    // --- MINES LOGIC ---
     let mBombs = [], mOpened = 0, mBet = 0, mPlaying = false;
-    let mSteps = [1.2, 1.5, 1.9, 2.6, 3.8, 5.5, 8.5, 13.0, 21.0];
+    let mSteps = [1.2, 1.5, 1.9, 2.7, 4.0, 6.0, 9.0, 15, 25];
 
     function initMines() {
         const g = document.getElementById('mines-grid'); g.innerHTML = '';
@@ -213,48 +178,34 @@
             c.onclick = () => openMCell(c, i); g.appendChild(c);
         }
     }
-
     function startMines() {
         mBet = parseFloat(document.getElementById('mines-bet').value);
         if(mBet > balance || mPlaying) return;
         balance -= mBet; updateUI(); mPlaying = true; mOpened = 0; mBombs = [];
-        playSound('click');
+        playSnd('snd-click');
         while(mBombs.length < 3) { let r = Math.floor(Math.random()*25); if(!mBombs.includes(r)) mBombs.push(r); }
         initMines();
         let btn = document.getElementById('mines-main-btn');
-        btn.innerText = "PULNI OLISH (x1.00)"; btn.style.background = "#ffcc00"; btn.style.color = "black";
+        btn.innerText = "PULNI OLISH"; btn.style.background = "#ffcc00"; btn.style.color = "black";
         btn.onclick = cashoutMines;
     }
-
     function openMCell(el, id) {
         if(!mPlaying || el.innerText !== '') return;
         if(mBombs.includes(id)) {
-            el.innerHTML = "💣"; el.classList.add('lose-cell');
-            mPlaying = false; playSound('boom'); alert("BOMBA!"); resetMinesUI();
+            el.innerHTML = "💣"; el.classList.add('lose-cell'); mPlaying = false;
+            playSnd('snd-boom'); alert("BOMBA!"); resetMinesUI();
         } else {
-            el.innerHTML = "💎"; el.classList.add('win-cell');
-            mOpened++; playSound('win');
+            el.innerHTML = "💎"; el.classList.add('win-cell'); mOpened++;
+            playSnd('snd-win');
             let curM = mSteps[mOpened-1];
             document.getElementById('m-mult').innerText = "x" + curM;
             document.getElementById('m-win').innerText = (mBet * curM).toFixed(0);
-            document.getElementById('mines-main-btn').innerText = "OLISH " + (mBet * curM).toFixed(0);
         }
     }
+    function cashoutMines() { if(!mPlaying || mOpened === 0) return; balance += Math.floor(mBet * mSteps[mOpened-1]); updateUI(); playSnd('snd-win'); resetMinesUI(); }
+    function resetMinesUI() { mPlaying = false; let btn = document.getElementById('mines-main-btn'); btn.innerText = "BOSHLASH"; btn.style.background = "var(--accent)"; btn.style.color = "white"; btn.onclick = startMines; }
 
-    function cashoutMines() {
-        if(!mPlaying || mOpened === 0) return;
-        let w = Math.floor(mBet * mSteps[mOpened-1]);
-        balance += w; updateUI(); playSound('win'); alert("YUTUQ: " + w); resetMinesUI();
-    }
-
-    function resetMinesUI() {
-        mPlaying = false;
-        let btn = document.getElementById('mines-main-btn');
-        btn.innerText = "O'YINNI BOSHLASH"; btn.style.background = "var(--accent)"; btn.style.color = "white";
-        btn.onclick = startMines;
-    }
-
-    generateLiveBets(false);
+    updateBets(false);
 </script>
 </body>
 </html>
