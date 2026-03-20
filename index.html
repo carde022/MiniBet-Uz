@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MiniBet Uz | Mines Professional</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        :root {
+            --bg-color: #0b0e14;
+            --card-color: #151a21;
+            --accent-color: #007aff;
+            --win-color: #00c805;
+            --lose-color: #ff3b30;
+            --text-color: #ffffff;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .header {
+            width: 100%; padding: 15px; background: var(--card-color);
+            text-align: center; border-bottom: 1px solid #232a35;
+        }
+
+        .balance-label { font-size: 12px; color: #8e8e93; }
+        .balance-value { font-size: 22px; font-weight: 700; color: #ffcc00; }
+
+        .game-grid {
+            display: grid; grid-template-columns: repeat(5, 1fr);
+            gap: 10px; margin: 20px 0; width: 90%; max-width: 350px;
+        }
+
+        .cell {
+            aspect-ratio: 1; background: #2c3440; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; cursor: pointer; transition: 0.2s;
+        }
+
+        .cell.open-win { background: var(--win-color); transform: scale(0.95); }
+        .cell.open-lose { background: var(--lose-color); transform: scale(0.95); }
+        .cell.disabled { pointer-events: none; opacity: 0.8; }
+
+        .controls { width: 90%; max-width: 350px; display: flex; flex-direction: column; gap: 12px; }
+        
+        input {
+            background: #1c222b; border: 1px solid #3a4452; color: white;
+            padding: 15px; border-radius: 12px; font-size: 16px; outline: none;
+        }
+
+        .btn-main {
+            background: var(--accent-color); color: white; border: none;
+            padding: 16px; border-radius: 12px; font-size: 18px; font-weight: 600;
+        }
+
+        .btn-main:disabled { background: #3a4452; color: #8e8e93; }
+    </style>
+</head>
+<body>
+
+<div class="header">
+    <div class="balance-label">HISOBINGIZ</div>
+    <div class="balance-value" id="balance-display">0 UZS</div>
+</div>
+
+<div class="game-grid" id="grid">
+    </div>
+
+<div class="controls">
+    <input type="number" id="bet-input" placeholder="Tikish summasi" value="5000">
+    <button class="btn-main" id="action-btn" onclick="startNewGame()">O'YINNI BOSHLASH</button>
+</div>
+
+<script>
+    let tg = window.Telegram.WebApp;
+    tg.expand();
+
+    const API_URL = "http://127.0.0.1:8000"; // Serveringiz manzili (Keyinchalik o'zgartiriladi)
+    let isPlaying = false;
+    let userBalance = 15000; // Bu botdan dinamik keladi
+
+    document.getElementById('balance-display').innerText = userBalance.toLocaleString() + " UZS";
+
+    function createGrid() {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = '';
+        for (let i = 0; i < 25; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.onclick = () => handleCellClick(cell, i);
+            grid.appendChild(cell);
+        }
+    }
+
+    async function startNewGame() {
+        const bet = parseFloat(document.getElementById('bet-input').value);
+        if (bet > userBalance) return alert("Mablag' yetarli emas!");
+        
+        isPlaying = true;
+        document.getElementById('action-btn').disabled = true;
+        document.getElementById('bet-input').disabled = true;
+        createGrid();
+    }
+
+    async function handleCellClick(cell, cellId) {
+        if (!isPlaying || cell.classList.contains('disabled')) return;
+
+        const bet = parseFloat(document.getElementById('bet-input').value);
+        
+        // SERVERGA SO'ROV YUBORISH
+        try {
+            const response = await fetch(`${API_URL}/play/mines`, {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({
+                    user_id: tg.initDataUnsafe.user?.id || 0,
+                    bet_amount: bet
+                })
+            });
+
+            const data = await response.json();
+
+            if (data.win) {
+                cell.innerHTML = "💎";
+                cell.classList.add('open-win', 'disabled');
+                // Bu yerda xohlasangiz har safar balansni yangilashingiz mumkin
+            } else {
+                cell.innerHTML = "💣";
+                cell.classList.add('open-lose', 'disabled');
+                endGame(false, bet);
+            }
+        } catch (e) {
+            alert("Serverga ulanishda xato!");
+            console.error(e);
+        }
+    }
+
+    function endGame(isWin, bet) {
+        isPlaying = false;
+        document.getElementById('action-btn').disabled = false;
+        document.getElementById('bet-input').disabled = false;
+        
+        if (!isWin) {
+            userBalance -= bet;
+            // Botga yutqazganlik haqida xabar berish
+            tg.sendData(JSON.stringify({result: "lose", amount: bet}));
+        }
+        document.getElementById('balance-display').innerText = userBalance.toLocaleString() + " UZS";
+    }
+
+    createGrid();
+</script>
+
+</body>
+</html>
