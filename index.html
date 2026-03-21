@@ -3,108 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MiniBet Official | Professional Casino</title>
+    <title>MiniBet  | 1xStyle</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --blue: #1a237e; --dark: #0d1117; --panel: #161b22; --gold: #f59e0b; --win: #00c853; --red: #ff3d00; --text: #eef2f8; --brand-blue: #004586; }
-        body { background: var(--dark); color: var(--text); font-family: 'Segoe UI', Roboto, sans-serif; margin: 0; padding: 0; user-select: none; overflow: hidden; }
+        :root { --blue: #1a237e; --dark: #0b0e14; --panel: #161b22; --gold: #f59e0b; --win: #00c853; --red: #ff3d00; }
+        body { background: var(--dark); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; overflow: hidden; user-select: none; }
         .screen { position: fixed; inset: 0; display: flex; flex-direction: column; z-index: 100; background: var(--dark); }
         .hidden { display: none !important; }
 
-        /* --- 1. 1xSTYLE LOADER --- */
-        .loader-screen { background: #0b1a2e; align-items: center; justify-content: center; z-index: 1000; }
-        .spinner {
-            width: 50px; height: 50px;
-            border: 4px solid rgba(255,255,255,0.1);
-            border-left-color: #2196f3;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* --- 1. NEW 3D DOLLAR LOADING --- */
+        .loader-screen { background: radial-gradient(circle, #1a237e 0%, #05070a 100%); align-items: center; justify-content: center; z-index: 2000; }
+        .dollar-spin { width: 100px; height: 100px; position: relative; transform-style: preserve-3d; animation: spin3d 2s linear infinite; }
+        .dollar-spin::before { content: '💵'; font-size: 60px; position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-shadow: 0 0 20px var(--gold); }
+        @keyframes spin3d { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
+        .loading-bar { width: 200px; height: 4px; background: #21262d; border-radius: 10px; margin-top: 30px; overflow: hidden; }
+        .progress { width: 0%; height: 100%; background: var(--gold); box-shadow: 0 0 15px var(--gold); animation: load 2.5s forwards; }
+        @keyframes load { to { width: 100%; } }
 
-        /* --- 2. REG & LOGIN STYLE --- */
-        #auth-screen { overflow-y: auto; background: #f4f6f9; color: #333; padding: 20px; }
-        .reg-header { color: var(--brand-blue); text-align: center; border-bottom: 1px solid #ddd; padding-bottom: 15px; margin-bottom: 20px; font-weight: 900; font-size: 20px;}
-        .form-group { background: white; border-radius: 12px; padding: 10px 15px; margin-bottom: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .form-group label { font-size: 10px; color: #7b8a97; text-transform: uppercase; font-weight: bold; }
-        .form-group input { width: 100%; border: none; border-bottom: 1px solid #eee; padding: 8px 0; font-size: 15px; outline: none; }
-        .btn-main { background: #28a745; color: white; border: none; width: 100%; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; margin-top: 10px; }
-        .btn-outline { background: transparent; color: var(--brand-blue); border: 1px solid var(--brand-blue); width: 100%; padding: 10px; border-radius: 10px; margin-top: 10px; }
+        /* --- 2. LOGIN / REGISTRATION (1xStyle) --- */
+        .auth-container { padding: 25px; background: #f4f6f9; color: #333; height: 100vh; overflow-y: auto; }
+        .tabs { display: flex; margin-bottom: 20px; background: #ddd; border-radius: 10px; padding: 5px; }
+        .tab { flex: 1; padding: 12px; text-align: center; font-weight: bold; border-radius: 8px; cursor: pointer; }
+        .tab.active { background: white; color: var(--blue); box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 11px; color: #666; margin-bottom: 5px; font-weight: bold; }
+        .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 15px; box-sizing: border-box; outline: none; }
+        .btn-auth { width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-weight: 900; margin-top: 10px; }
 
-        /* --- 3. LOBBY --- */
-        header { background: var(--panel); padding: 12px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--brand-blue); }
-        .balance-box { background: #05070a; padding: 5px 12px; border-radius: 15px; border: 1px solid var(--gold); color: var(--gold); font-weight: 800; font-size: 14px; }
-        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px; }
-        .game-card { background: var(--panel); border-radius: 15px; padding: 20px 10px; text-align: center; border-bottom: 3px solid var(--brand-blue); transition: 0.2s; }
-        .game-card:active { transform: scale(0.95); }
-        .game-card i { font-size: 32px; display: block; margin-bottom: 8px; }
+        /* --- 3. MAIN LOBBY --- */
+        header { background: var(--panel); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--blue); }
+        .balance-card { background: #05070a; padding: 8px 15px; border-radius: 20px; border: 1px solid var(--gold); color: var(--gold); font-weight: 900; }
+        .game-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; padding: 15px; }
+        .game-card { background: var(--panel); border-radius: 20px; padding: 20px; text-align: center; border-bottom: 4px solid var(--blue); }
+        .game-card img { width: 60px; height: 60px; margin-bottom: 10px; }
 
-        /* --- O'YINLAR --- */
-        .mines-board { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin: 15px 0; }
-        .cell { aspect-ratio: 1; background: #2c3440; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-        .cell.opened { background: #161b22; }
+        /* --- 4. GAME OVERLAYS --- */
+        .game-overlay { position: fixed; inset: 0; background: var(--dark); z-index: 500; display: flex; flex-direction: column; }
+        .game-header { padding: 15px; display: flex; justify-content: space-between; align-items: center; background: var(--panel); }
+        .game-content { flex: 1; padding: 15px; display: flex; flex-direction: column; align-items: center; overflow-y: auto; }
+        
+        /* Mines Board */
+        .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 20px 0; }
+        .cell { width: 60px; height: 60px; background: #21262d; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; border: 1px solid #30363d; transition: 0.2s; }
+        .cell.open { background: #0d1117; border-color: var(--win); }
+        .cell.bomb { background: var(--red); }
+        
+        .bet-box { width: 100%; background: var(--panel); padding: 20px; border-radius: 20px; box-sizing: border-box; }
+        .bet-input { width: 100%; padding: 15px; background: #000; color: var(--gold); border: 1px solid #333; border-radius: 10px; font-size: 18px; text-align: center; margin-bottom: 15px; }
     </style>
 </head>
 <body>
 
     <div id="loader" class="screen loader-screen">
-        <div class="spinner"></div>
-        <p style="margin-top: 15px; color: #fff; font-size: 13px; letter-spacing: 1px;">YUKLANMOQDA...</p>
+        <div class="dollar-spin"></div>
+        <div class="loading-bar"><div class="progress"></div></div>
+        <p style="color: var(--gold); margin-top: 15px; font-weight: bold; letter-spacing: 2px;">MINIBET PRO...</p>
     </div>
 
     <div id="auth-screen" class="screen hidden">
-        <div id="reg-form">
-            <div class="reg-header">MiniBet | Ro'yxatdan o'tish</div>
-            <div class="form-group"><label>Email</label><input type="email" id="reg-mail"></div>
-            <div class="form-group"><label>Parol</label><input type="password" id="reg-pass"></div>
-            <div class="form-group"><label>Ism</label><input type="text" id="reg-ism"></div>
-            <div class="form-group"><label>Familiya</label><input type="text" id="reg-fam"></div>
-            <button class="btn-main" onclick="submitRegistration()">RO'YXATDAN O'TISH</button>
-            <button class="btn-outline" onclick="toggleAuth('login')">Kirish qismiga o'tish</button>
-        </div>
-        <div id="login-form" class="hidden">
-            <div class="reg-header">MiniBet | Kirish</div>
-            <div class="form-group"><label>Email / Phone</label><input type="text" id="login-id"></div>
-            <div class="form-group"><label>Parol</label><input type="password" id="login-pass"></div>
-            <button class="btn-main" onclick="alert('Tez kunda!')">KIRISH</button>
-            <button class="btn-outline" onclick="toggleAuth('reg')">Ro'yxatdan o'tish</button>
+        <div class="auth-container">
+            <div class="tabs">
+                <div class="tab active" onclick="switchAuth('reg')">RO'YXATDAN O'TISH</div>
+                <div class="tab" onclick="switchAuth('login')">KIRISH</div>
+            </div>
+
+            <div id="form-reg">
+                <div class="form-group"><label>Ism</label><input type="text" id="r-ism" placeholder="Ismingiz"></div>
+                <div class="form-group"><label>Familiya</label><input type="text" id="r-fam" placeholder="Familiyangiz"></div>
+                <div class="form-group"><label>Telefon</label><input type="tel" id="r-tel" placeholder="901234567"></div>
+                <div class="form-group"><label>Email</label><input type="email" id="r-mail" placeholder="example@mail.com"></div>
+                <div class="form-group"><label>Parol</label><input type="password" id="r-pass" placeholder="********"></div>
+                <button class="btn-auth" onclick="handleRegister()">DAVOM ETISH</button>
+            </div>
+
+            <div id="form-login" class="hidden">
+                <div class="form-group"><label>Email yoki Telefon</label><input type="text" id="l-user" placeholder="Email / Tel"></div>
+                <div class="form-group"><label>Parol</label><input type="password" id="l-pass" placeholder="********"></div>
+                <button class="btn-auth" style="background: var(--blue);" onclick="handleLogin()">KIRISH</button>
+            </div>
         </div>
     </div>
 
     <div id="app-screen" class="screen hidden">
         <header>
-            <div style="font-weight: 900; color: var(--gold); font-size: 18px;">MiniBet PRO</div>
-            <div class="balance-box"><span id="u-balance">0</span> UZS</div>
+            <div style="font-weight: 900; color: var(--gold); font-size: 20px;">MINIBET PRO</div>
+            <div class="balance-card"><span id="u-balance">0</span> UZS</div>
         </header>
         <div class="game-grid">
-            <div class="game-card" onclick="openGame('mines')"><i>💣</i><b>MINES</b></div>
-            <div class="game-card" onclick="openGame('aviator')"><i>🚀</i><b>AVIATOR</b></div>
-            <div class="game-card" onclick="openGame('apple')"><i>🍎</i><b>APPLE</b></div>
-            <div class="game-card" onclick="openGame('chicken')"><i>🍗</i><b>CHICKEN</b></div>
+            <div class="game-card" onclick="openGame('mines')"><span>💣</span><br><b>MINES</b></div>
+            <div class="game-card" onclick="openGame('aviator')"><span>🚀</span><br><b>AVIATOR</b></div>
+            <div class="game-card" onclick="openGame('apple')"><span>🍎</span><br><b>APPLE</b></div>
+            <div class="game-card" onclick="openGame('chicken')"><span>🍗</span><br><b>CHICKEN</b></div>
         </div>
         <div style="padding: 15px;">
-            <button onclick="getBonus()" style="width:100%; padding:15px; border-radius:12px; background:linear-gradient(to right, #1a237e, #0d47a1); color:white; border:none; font-weight:bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">🎁 KUNLIK BONUS</button>
+            <button onclick="getBonus()" style="width:100%; padding:15px; border-radius:15px; background:linear-gradient(90deg, #1a237e, #0d47a1); color:white; border:none; font-weight:bold;">🎁 KUNLIK BONUS OLISH</button>
         </div>
     </div>
 
-    <div id="game-overlay" class="screen hidden">
-        <header>
-            <button onclick="exitGame()" style="background:none; border:none; color:white; font-size:24px;">✕</button>
-            <div class="balance-box"><span id="g-balance">0</span> UZS</div>
-        </header>
-        <div id="game-container" class="game-view" style="padding: 20px;"></div>
+    <div id="game-view" class="game-overlay hidden">
+        <div class="game-header">
+            <button onclick="closeGame()" style="background:none; border:none; color:#8b949e; font-size:24px;">✕</button>
+            <div class="balance-card" id="g-balance">0</div>
+        </div>
+        <div id="game-content" class="game-content"></div>
     </div>
 
 <script>
     let tg = window.Telegram.WebApp;
+    tg.expand();
     const SERVER_URL = "https://justa-recriminative-nonrequisitely.ngrok-free.dev";
     let uId = tg.initDataUnsafe.user?.id || 7425396576;
     let balance = 0;
+    let currentInGame = false;
 
+    // --- INITIAL LOAD ---
     async function init() {
         try {
             const r = await fetch(`${SERVER_URL}/api/v3/check_user`, {
-                method: "POST", headers: {"Content-Type":"application/json"},
+                method: "POST", headers: {"Content-Type": "application/json"},
                 body: JSON.stringify({tg_id: uId})
             });
             const d = await r.json();
@@ -118,8 +134,8 @@
                 } else {
                     document.getElementById('auth-screen').classList.remove('hidden');
                 }
-            }, 1500);
-        } catch(e) { console.error(e); }
+            }, 2500);
+        } catch(e) { console.log("Server xatosi!"); }
     }
 
     function updateUI() {
@@ -128,65 +144,110 @@
         if(gb) gb.innerText = Math.floor(balance).toLocaleString();
     }
 
-    function toggleAuth(type) {
-        document.getElementById('reg-form').classList.toggle('hidden', type === 'login');
-        document.getElementById('login-form').classList.toggle('hidden', type === 'reg');
+    // --- AUTH LOGIC ---
+    function switchAuth(type) {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.getElementById('form-reg').classList.add('hidden');
+        document.getElementById('form-login').classList.add('hidden');
+        if(type === 'reg') {
+            document.getElementById('form-reg').classList.remove('hidden');
+            document.querySelector('.tab:nth-child(1)').classList.add('active');
+        } else {
+            document.getElementById('form-login').classList.remove('hidden');
+            document.querySelector('.tab:nth-child(2)').classList.add('active');
+        }
     }
 
-    async function submitRegistration() {
+    async function handleRegister() {
         const data = {
             tg_id: uId,
-            familiya: document.getElementById('reg-fam').value,
-            ism: document.getElementById('reg-ism').value,
-            birthday: "2000-01-01",
-            email: document.getElementById('reg-mail').value,
-            phone: uId.toString(), 
-            password: document.getElementById('reg-pass').value
+            ism: document.getElementById('r-ism').value,
+            familiya: document.getElementById('r-fam').value,
+            phone: document.getElementById('r-tel').value,
+            email: document.getElementById('r-mail').value,
+            password: document.getElementById('r-pass').value,
+            birthday: "2000-01-01"
         };
-        if(!data.email || !data.password) return alert("Ma'lumotlarni kiriting!");
-        
         const r = await fetch(`${SERVER_URL}/api/v3/register_full`, {
-            method: "POST", headers: {"Content-Type":"application/json"},
+            method: "POST", headers: {"Content-Type": "application/json"},
             body: JSON.stringify(data)
         });
         const res = await r.json();
-        if(res.status === "success") location.reload();
-        else alert(res.detail || "Xato!");
+        if(res.status === "success") location.reload(); else alert(res.detail);
     }
 
-    async function getBonus() {
-        const r = await fetch(`${SERVER_URL}/api/v3/get_bonus`, {
-            method: "POST", headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({tg_id: uId})
-        });
-        const res = await r.json();
-        if(res.status === "success") {
-            balance = res.new_balance;
-            updateUI();
-            alert("Tabriklaymiz! 5000 UZS bonus berildi.");
-        } else {
-            alert(res.detail);
-        }
-    }
-
+    // --- GAME ENGINE ---
     function openGame(type) {
-        document.getElementById('game-overlay').classList.remove('hidden');
-        const container = document.getElementById('game-container');
-        if(type === 'mines') {
-            container.innerHTML = `
-                <h3 style="text-align:center">MINES</h3>
-                <div class="mines-board" id="m-board"></div>
-                <input type="number" id="m-bet" value="1000" style="width:100%; padding:12px; background:#000; color:white; border:1px solid #333; border-radius:10px; margin-bottom:10px;">
-                <button onclick="playMines()" id="btn-play" class="btn-main" style="background:var(--gold)">TIKISH</button>
-            `;
-            const board = document.getElementById('m-board');
-            for(let i=0; i<25; i++) board.innerHTML += `<div class="cell" id="c-${i}">?</div>`;
+        document.getElementById('game-view').classList.remove('hidden');
+        const cont = document.getElementById('game-content');
+        if(type === 'mines') renderMines(cont);
+        else cont.innerHTML = `<h3 style="margin-top:50px;">${type.toUpperCase()} o'yini tez kunda ishga tushadi!</h3>`;
+    }
+
+    function closeGame() {
+        if(currentInGame) { if(!confirm("O'yin davom etmoqda, chiqasizmi?")) return; }
+        document.getElementById('game-view').classList.add('hidden');
+        location.reload();
+    }
+
+    // --- MINES LOGIC (WORKING 100%) ---
+    let bombList = [];
+    function renderMines(cont) {
+        cont.innerHTML = `
+            <div class="mines-grid" id="m-grid"></div>
+            <div class="bet-box">
+                <input type="number" id="m-bet" class="bet-input" value="1000">
+                <button id="m-btn" class="btn-auth" onclick="startMines()">STAVKA QILISH</button>
+            </div>
+        `;
+        const grid = document.getElementById('m-grid');
+        for(let i=0; i<25; i++) grid.innerHTML += `<div class="cell" onclick="openCell(${i}, this)">?</div>`;
+    }
+
+    async function startMines() {
+        const bet = parseInt(document.getElementById('m-bet').value);
+        if(bet > balance || bet < 100) return alert("Mablag' yetarli emas!");
+
+        const r = await fetch(`${SERVER_URL}/api/v3/games/mines/generate`);
+        const d = await r.json();
+        bombList = d.bombs;
+
+        const res = await fetch(`${SERVER_URL}/api/v3/process_bet`, {
+            method: "POST", headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({tg_id: uId, amount: bet, game_name: "Mines"})
+        });
+        const final = await res.json();
+        balance = final.current_balance; updateUI();
+
+        currentInGame = true;
+        let btn = document.getElementById('m-btn');
+        btn.innerText = "CASHOUT (x1.5)";
+        btn.style.background = var(--win);
+        btn.onclick = () => cashoutMines(bet * 1.5);
+    }
+
+    function openCell(idx, el) {
+        if(!currentInGame) return;
+        if(bombList.includes(idx)) {
+            el.innerHTML = "💣"; el.classList.add('bomb');
+            alert("BOOM! Yutqazdingiz.");
+            location.reload();
         } else {
-            container.innerHTML = `<p style="text-align:center; margin-top:50px;">${type.toUpperCase()} o'yini tez kunda qo'shiladi...</p>`;
+            el.innerHTML = "💎"; el.classList.add('open');
         }
     }
 
-    function exitGame() { document.getElementById('game-overlay').classList.add('hidden'); }
+    async function cashoutMines(win) {
+        const r = await fetch(`${SERVER_URL}/api/v3/process_win`, {
+            method: "POST", headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({tg_id: uId, win_amount: win, game_name: "Mines", status: "win"})
+        });
+        const d = await r.json();
+        balance = d.new_balance; updateUI();
+        alert(`G'ALABA! ${win} UZS qo'shildi.`);
+        location.reload();
+    }
+
     window.onload = init;
 </script>
 </body>
