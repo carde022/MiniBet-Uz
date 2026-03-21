@@ -5,109 +5,101 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MiniBet Uz - Ro'yxatdan o'tish</title>
 <style>
-    body {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        background: linear-gradient(to bottom, #1a2a3a, #101b27);
-        color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        margin: 0;
-    }
-
-    .reg-card {
-        background: #243447;
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        width: 100%;
-        max-width: 400px;
-        position: relative;
-        overflow: hidden;
-    }
-
-    .header {
-        text-align: center;
-        margin-bottom: 20px;
-        color: #28a745;
-        font-size: 26px;
-        font-weight: bold;
-    }
-
-    input, select {
-        width: 100%;
-        padding: 12px;
-        margin: 10px 0;
-        background: #1a2a3a;
-        border: 1px solid #34495e;
-        color: white;
-        border-radius: 6px;
-        box-sizing: border-box;
-        transition: 0.3s;
-    }
-    input:focus { border-color: #28a745; outline: none; }
-
-    button {
-        width: 100%;
-        padding: 15px;
-        background: #28a745;
-        border: none;
-        color: white;
-        font-weight: bold;
-        border-radius: 6px;
-        cursor: pointer;
-        margin-top: 15px;
-        transition: 0.3s;
-    }
-    button:hover { background: #218838; }
-
-    .bonus-info {
-        font-size: 13px;
-        color: #bdc3c7;
-        margin-top: 10px;
-        text-align: center;
-    }
-
-    .toast {
-        position: fixed;
-        bottom: 20px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: #333;
-        color: white;
-        padding: 15px 20px;
-        border-radius: 8px;
-        box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-        display: none;
-        z-index: 1000;
-    }
-
-    .loading-overlay {
-        position: absolute;
-        inset: 0;
-        background: rgba(0,0,0,0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 12px;
-        display: none;
-        z-index: 10;
-    }
-    .loading-overlay.active { display: flex; }
-
-    .spinner {
-        border: 4px solid #444;
-        border-top: 4px solid #28a745;
-        border-radius: 50%;
-        width: 40px;
-        height: 40px;
-        animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(to bottom, #1a2a3a, #101b27);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+.reg-card {
+    background: #243447;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    width: 100%;
+    max-width: 400px;
+    position: relative;
+    overflow: hidden;
+}
+.header {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #28a745;
+    font-size: 26px;
+    font-weight: bold;
+}
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    background: #1a2a3a;
+    border: 1px solid #34495e;
+    color: white;
+    border-radius: 6px;
+    box-sizing: border-box;
+    transition: 0.3s;
+}
+input:focus { border-color: #28a745; outline: none; }
+button {
+    width: 100%;
+    padding: 15px;
+    background: #28a745;
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: 0.3s;
+}
+button:hover { background: #218838; }
+.bonus-info {
+    font-size: 13px;
+    color: #bdc3c7;
+    margin-top: 10px;
+    text-align: center;
+}
+.toast {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #333;
+    color: white;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+    display: none;
+    z-index: 1000;
+}
+.loading-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 12px;
+    display: none;
+    z-index: 10;
+}
+.loading-overlay.active { display: flex; }
+.spinner {
+    border: 4px solid #444;
+    border-top: 4px solid #28a745;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
 </style>
 </head>
 <body>
@@ -136,6 +128,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
+const NGROK_URL = "https://justa-recriminative-nonrequisitely.ngrok-free.dev";
+
 function showToast(msg, success=true){
     const toast = document.getElementById('toast');
     toast.style.background = success ? '#28a745' : '#e74c3c';
@@ -169,7 +163,7 @@ async function register() {
     try {
         loading.classList.add('active');
 
-        const response = await fetch("http://127.0.0.1:8000/api/auth/register", {
+        const response = await fetch(`${NGROK_URL}/api/auth/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(data)
