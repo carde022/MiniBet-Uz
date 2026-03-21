@@ -2,152 +2,52 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MiniBet Uz | Official</title>
-    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>MiniBet Uz | Kirish</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
     <style>
-        :root { --primary: #28a745; --bg: #1a2a3a; --card: #243447; --text: #ffffff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 10px; }
-        .container { max-width: 500px; margin: 0 auto; }
-        
-        /* Card Style */
-        .card { background: var(--card); padding: 20px; border-radius: 15px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-bottom: 20px; }
-        .header { text-align: center; color: var(--primary); font-size: 28px; font-weight: bold; margin-bottom: 5px; }
-        
-        /* Form & Inputs */
-        input { width: 100%; padding: 12px; margin: 8px 0; background: #141f2b; border: 1px solid #34495e; color: white; border-radius: 8px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: var(--primary); border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; transition: 0.3s; }
-        button:hover { opacity: 0.8; }
-
-        /* Mines Grid */
-        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 20px 0; }
-        .cell { aspect-ratio: 1; background: #2c3e50; border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.2s; }
-        .cell:hover { background: #34495e; }
-        .cell.diamond { background: var(--primary); content: '💎'; }
-        .cell.mine { background: #e74c3c; content: '💣'; }
-
-        /* Navigation */
-        .nav { display: flex; justify-content: space-between; background: var(--card); padding: 15px; border-radius: 10px; margin-bottom: 15px; }
-        .balance { color: #f1c40f; font-weight: bold; }
-
-        .hidden { display: none; }
+        body { max-width: 400px; margin: 20px auto; padding: 20px; background: #1a2a3a; }
+        .card { background: #243447; padding: 20px; border-radius: 10px; }
+        button { width: 100%; background: #28a745; color: white; border: none; }
+        .error { color: #ff4d4d; font-size: 13px; margin-top: 10px; white-space: pre-line; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div id="auth-page" class="card">
-        <div class="header">MiniBet Uz</div>
-        <p style="text-align: center; font-size: 14px; opacity: 0.7;">Ro'yxatdan o'tish</p>
-        <input type="text" id="reg-fn" placeholder="Ism *">
-        <input type="text" id="reg-ln" placeholder="Familiya *">
-        <input type="email" id="reg-email" placeholder="Email *">
-        <input type="text" id="reg-phone" placeholder="Telefon (+998...)">
-        <input type="password" id="reg-pw" placeholder="Parol *">
-        <input type="number" id="reg-tg" placeholder="Telegram ID">
-        <button onclick="register()">RO'YXATDAN O'TISH</button>
-        <p style="font-size: 12px; text-align: center; margin-top: 15px;">Bonus: 10,000 UZS + 1XGAMES</p>
+    <div class="card">
+        <h2 style="text-align: center; color: #28a745;">MiniBet Uz</h2>
+        <input type="text" id="fn" placeholder="Ism">
+        <input type="text" id="ln" placeholder="Familiya">
+        <input type="email" id="email" placeholder="Email">
+        <input type="text" id="phone" placeholder="Telefon (+998...)">
+        <input type="password" id="pw" placeholder="Parol">
+        <input type="number" id="tg" placeholder="Telegram ID">
+        <button onclick="doRegister()">RO'YXATDAN O'TISH</button>
+        <div id="error-box" class="error"></div>
     </div>
 
-    <div id="game-page" class="hidden">
-        <div class="nav">
-            <span id="user-display">👤 Yoldosh</span>
-            <span class="balance" id="user-balance">💰 0 UZS</span>
-        </div>
+    <script src="js/api.js"></script>
+    <script>
+        async function doRegister() {
+            const errorBox = document.getElementById('error-box');
+            errorBox.innerText = "";
+            
+            const userData = {
+                first_name: document.getElementById('fn').value,
+                last_name: document.getElementById('ln').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                password: document.getElementById('pw').value,
+                tg_id: document.getElementById('tg').value
+            };
 
-        <div class="card">
-            <h3 style="margin-top:0;">💣 MINES</h3>
-            <input type="number" id="bet-amount" placeholder="Tikish miqdori (UZS)" value="1000">
-            <select id="mine-count" style="width:100%; padding:10px; background:#141f2b; color:white; border-radius:8px; border:1px solid #34495e;">
-                <option value="3">3 ta bomba</option>
-                <option value="5">5 ta bomba</option>
-                <option value="10">10 ta bomba</option>
-            </select>
-            <button style="margin-top:15px;" onclick="startGame()">O'YINNI BOSHLASH</button>
-
-            <div class="grid" id="mines-grid">
-                </div>
-            <button id="cashout-btn" class="hidden" style="background:#f1c40f; color:#000;" onclick="cashout()">PULNI YECHIB OLISH</button>
-        </div>
-    </div>
-</div>
-
-<script>
-    const API = "https://justa-recriminative-nonrequisitely.ngrok-free.dev";
-    let my_tg_id = "";
-
-    // 1. REGISTRATSIYA
-    async function register() {
-        const data = {
-            tg_id: document.getElementById('reg-tg').value,
-            first_name: document.getElementById('reg-fn').value,
-            last_name: document.getElementById('reg-ln').value,
-            email: document.getElementById('reg-email').value,
-            phone: document.getElementById('reg-phone').value,
-            password: document.getElementById('reg-pw').value
-        };
-
-        try {
-            const res = await axios.post(`${API}/api/auth/register`, null, { params: data });
-            alert("✅ " + res.data.message);
-            my_tg_id = data.tg_id;
-            loadProfile();
-            document.getElementById('auth-page').classList.add('hidden');
-            document.getElementById('game-page').classList.remove('hidden');
-        } catch (err) {
-            alert("❌ Xato: " + (err.response?.data.detail || "Server ulanmadi"));
+            try {
+                const res = await request("/api/auth/register", "POST", userData);
+                alert("✅ " + res.message);
+                localStorage.setItem("my_tg_id", userData.tg_id);
+                window.location.href = "game.html";
+            } catch (err) {
+                errorBox.innerText = "❌ " + err.message;
+            }
         }
-    }
-
-    // 2. PROFILNI YUKLASH
-    async function loadProfile() {
-        try {
-            const res = await axios.get(`${API}/api/user/me/${my_tg_id}`);
-            document.getElementById('user-balance').innerText = `💰 ${res.data.balance.toLocaleString()} UZS`;
-            document.getElementById('user-display').innerText = `👤 ${res.data.first_name}`;
-        } catch (err) { console.error("Profil yuklanmadi"); }
-    }
-
-    // 3. MINES O'YINI
-    function createGrid() {
-        const grid = document.getElementById('mines-grid');
-        grid.innerHTML = '';
-        for (let i = 0; i < 25; i++) {
-            const cell = document.createElement('div');
-            cell.className = 'cell';
-            cell.onclick = () => openCell(i, cell);
-            grid.appendChild(cell);
-        }
-    }
-
-    async function startGame() {
-        const bet = document.getElementById('bet-amount').value;
-        const mines = document.getElementById('mine-count').value;
-        try {
-            const res = await axios.post(`${API}/api/games/mines/play`, null, {
-                params: { tg_id: my_tg_id, bet: bet, mines_count: mines }
-            });
-            createGrid();
-            document.getElementById('cashout-btn').classList.remove('hidden');
-            loadProfile();
-            alert("💣 Bombalar joylashtirildi! Ehtiyot bo'ling.");
-        } catch (err) { alert(err.response?.data.detail); }
-    }
-
-    function openCell(index, element) {
-        // Bu yerda backend-dan natijani tekshirish logikasi bo'ladi
-        element.style.background = "#28a745";
-        element.innerText = "💎";
-    }
-
-    function cashout() {
-        alert("💰 Tabriklaymiz! Yutuq balansingizga qo'shildi.");
-        document.getElementById('cashout-btn').classList.add('hidden');
-        loadProfile();
-    }
-
-    createGrid(); // Boshlang'ich grid
-</script>
-
+    </script>
 </body>
 </html>

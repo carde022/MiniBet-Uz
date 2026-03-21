@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniBet Uz | Mines Professional</title>
+    <style>
+        :root { --primary: #28a745; --bg: #1a2a3a; --card: #243447; --accent: #f1c40f; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: white; margin: 0; padding: 20px; }
+        .container { max-width: 450px; margin: 0 auto; }
+        .header-nav { display: flex; justify-content: space-between; background: var(--card); padding: 15px; border-radius: 10px; margin-bottom: 20px; border-bottom: 3px solid var(--primary); }
+        .balance { color: var(--accent); font-weight: bold; font-size: 18px; }
+        
+        .game-card { background: var(--card); padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .multiplier-badge { background: #141f2b; padding: 10px; border-radius: 8px; text-align: center; margin-bottom: 15px; border: 1px dashed var(--accent); }
+        .multiplier-badge span { color: var(--accent); font-size: 20px; font-weight: bold; }
+
+        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin: 20px 0; }
+        .cell { aspect-ratio: 1; background: #2c3e50; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; transition: 0.2s; border: none; outline: none; }
+        .cell:hover:not(.open) { background: #3e5871; transform: scale(1.05); }
+        .cell.open { cursor: default; transform: scale(0.95); }
+        .cell.diamond { background: var(--primary); box-shadow: 0 0 15px var(--primary); }
+        .cell.mine { background: #e74c3c; box-shadow: 0 0 15px #e74c3c; }
+
+        input, select { width: 100%; padding: 12px; background: #141f2b; border: 1px solid #34495e; color: white; border-radius: 8px; margin-bottom: 10px; box-sizing: border-box; font-size: 16px; }
+        .btn-play { width: 100%; padding: 15px; background: var(--primary); border: none; color: white; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-play:disabled { background: #555; opacity: 0.6; }
+        
+        .btn-cashout { width: 100%; padding: 15px; background: var(--accent); border: none; color: #000; font-weight: bold; border-radius: 8px; cursor: pointer; font-size: 16px; margin-top: 10px; display: none; }
+        
+        #status-msg { margin-top: 15px; font-weight: bold; text-align: center; min-height: 24px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-nav">
+        <span>👤 ID: <span id="display-id">...</span></span>
+        <span class="balance" id="display-balance">💰 0 UZS</span>
+    </div>
+
+    <div class="game-card">
+        <div class="multiplier-badge" id="multi-box">
+            Koeffitsiyent: <span id="current-multi">1.00x</span>
+        </div>
+        
+        <label style="font-size: 12px; opacity: 0.7;">Tikish miqdori (UZS):</label>
+        <input type="number" id="bet-amount" value="1000" min="100">
+        
+        <label style="font-size: 12px; opacity: 0.7;">Minalar soni:</label>
+        <select id="mines-count">
+            <option value="3">3 ta mina</option>
+            <option value="5">5 ta mina</option>
+            <option value="10">10 ta mina</option>
+            <option value="24">24 ta mina (Xavfli!)</option>
+        </select>
+
+        <button class="btn-play" id="start-btn" onclick="startGame()">O'YINNI BOSHLASH</button>
+        <button class="btn-cashout" id="cashout-btn" onclick="claimWin()">PULNI YECHIB OLISH</button>
+
+        <div class="grid" id="mines-grid"></div>
+
+        <div id="status-msg"></div>
+    </div>
+</div>
+
+<script src="js/api.js"></script>
+<script src="js/mines.js"></script>
+</body>
+</html>
