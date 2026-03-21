@@ -10,7 +10,6 @@
         body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
         .hidden { display: none !important; }
         
-        /* Loader/Login Screen */
         #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .spinner { width: 50px; height: 50px; border: 5px solid #232a35; border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
@@ -20,12 +19,10 @@
         
         #main-scroll { flex: 1; overflow-y: auto; padding: 15px; }
 
-        /* Game Cards */
         .game-card { background: var(--panel); border-radius: 20px; padding: 25px; margin-bottom: 15px; text-align: center; border: 1px solid #232a35; position: relative; overflow: hidden; transition: 0.3s; }
         .game-card:active { transform: scale(0.97); }
         .game-icon { font-size: 50px; margin-bottom: 10px; }
 
-        /* API Status Indicator */
         .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
         .online { background: var(--win); box-shadow: 0 0 5px var(--win); }
 
@@ -81,13 +78,14 @@
     let tg = window.Telegram.WebApp;
     tg.expand();
 
-    const SERVER_URL = "http://localhost:8000"; // Kompyuteringizdagi server manzili
+    // YANGILANGAN NGROK HAVOLASI
+    const SERVER_URL = "https://justa-recriminative-nonrequisitely.ngrok-free.dev"; 
+
     let userData = {
         user_id: tg.initDataUnsafe.user?.id || 7425396576,
         username: tg.initDataUnsafe.user?.first_name || "O'yinchi"
     };
 
-    // --- 1. LOGIN / REGISTER (Server bilan aloqa) ---
     async function initLogin() {
         try {
             const response = await fetch(`${SERVER_URL}/login`, {
@@ -101,43 +99,34 @@
                 setTimeout(() => document.getElementById('auth-screen').classList.add('hidden'), 1000);
             }
         } catch (e) {
+            console.error("Ulanishda xato:", e);
             document.getElementById('auth-status').innerText = "Xato: Server o'chiq!";
             document.getElementById('auth-status').style.color = "red";
         }
     }
 
-    // --- 2. BALANSNI YANGILASH (Serverga yuborish) ---
     async function syncBalance(amount) {
-        await fetch(`${SERVER_URL}/update_balance`, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ user_id: userData.user_id, amount: amount })
-        });
-        refreshBalance();
+        try {
+            await fetch(`${SERVER_URL}/update_balance`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ user_id: userData.user_id, amount: amount })
+            });
+            refreshBalance();
+        } catch (e) { console.log("Balans yangilanmadi"); }
     }
 
     async function refreshBalance() {
-        const res = await fetch(`${SERVER_URL}/get_balance/${userData.user_id}`);
-        const data = await res.json();
-        document.getElementById('user-balance').innerText = data.balance.toLocaleString();
+        try {
+            const res = await fetch(`${SERVER_URL}/get_balance/${userData.user_id}`);
+            const data = await res.json();
+            document.getElementById('user-balance').innerText = data.balance.toLocaleString();
+        } catch (e) { console.log("Balansni olib bo'lmadi"); }
     }
 
-    // --- 3. SERVERDAN O'YIN MA'LUMOTLARINI OLISH ---
-    async function getMinesData() {
-        const res = await fetch(`${SERVER_URL}/mines/generate`);
-        return await res.json(); // {bombs: [1, 5, 22]}
-    }
-
-    async function getAviatorLimit() {
-        const res = await fetch(`${SERVER_URL}/aviator/crash_point`);
-        return await res.json(); // {crash_at: 2.45}
-    }
-
-    // Boshlang'ich funksiyalar
     function openGame(type) {
         document.getElementById('view-lobby').classList.add('hidden');
         document.getElementById('view-game').classList.remove('hidden');
-        // Bu yerda o'yin render qilinadi (Mines yoki Aviator)
         alert(type + " o'yini serverdan yuklanmoqda...");
     }
 
