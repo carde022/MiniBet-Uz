@@ -3,32 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MiniBet Uz | Pro API</title>
+    <title>MiniBet Uz | Pro Casino</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root { --bg: #0b0f19; --panel: #161c28; --accent: #3b82f6; --gold: #f59e0b; --win: #10b981; --red: #ef4444; }
-        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        body { background: var(--bg); color: white; font-family: 'Segoe UI', sans-serif; margin: 0; padding: 0; height: 100vh; overflow: hidden; }
         .hidden { display: none !important; }
         
+        /* Header & Balance */
+        header { background: var(--panel); padding: 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #232a35; }
+        .balance-card { background: #1e293b; padding: 8px 15px; border-radius: 20px; border: 1px solid #334155; font-weight: 800; color: var(--gold); }
+
+        /* Aviator Area */
+        #aviator-game { padding: 20px; text-align: center; }
+        .aviator-screen { width: 100%; height: 200px; background: #05070a; border-radius: 15px; position: relative; overflow: hidden; border: 2px solid #1e293b; margin-bottom: 20px; }
+        #plane { position: absolute; bottom: 20px; left: 20px; font-size: 40px; transition: 0.1s linear; }
+        #coefficient { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 45px; font-weight: 900; color: white; }
+
+        /* Mines Area */
+        .mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 20px 0; }
+        .cell { aspect-ratio: 1/1; background: #1e293b; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 24px; cursor: pointer; border: 1px solid #334155; }
+        .cell.opened { background: #0f172a; border-color: var(--win); }
+        .cell.bomb { background: var(--red); }
+
+        /* Controls */
+        .bet-input { width: 100%; background: #05070a; border: 1px solid #334155; color: white; padding: 12px; border-radius: 10px; margin-bottom: 10px; text-align: center; }
+        .btn { width: 100%; padding: 15px; border-radius: 10px; border: none; font-weight: 800; cursor: pointer; }
+        .btn-bet { background: var(--gold); color: black; }
+        .btn-cashout { background: var(--win); color: white; }
+
         #auth-screen { position: fixed; inset: 0; background: var(--bg); z-index: 2000; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .spinner { width: 50px; height: 50px; border: 5px solid #232a35; border-top-color: var(--gold); border-radius: 50%; animation: spin 1s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
-
-        header { background: var(--panel); padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #232a35; }
-        .balance-card { background: #1e293b; padding: 8px 15px; border-radius: 20px; border: 1px solid #334155; }
-        
-        #main-scroll { flex: 1; overflow-y: auto; padding: 15px; }
-
-        .game-card { background: var(--panel); border-radius: 20px; padding: 25px; margin-bottom: 15px; text-align: center; border: 1px solid #232a35; position: relative; overflow: hidden; transition: 0.3s; }
-        .game-card:active { transform: scale(0.97); }
-        .game-icon { font-size: 50px; margin-bottom: 10px; }
-
-        .status-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .online { background: var(--win); box-shadow: 0 0 5px var(--win); }
-
-        footer { background: var(--panel); display: flex; justify-content: space-around; padding: 15px 0; border-top: 1px solid #232a35; }
-        .nav-btn { color: #94a3b8; font-size: 11px; text-align: center; cursor: pointer; }
-        .nav-active { color: var(--gold); }
     </style>
 </head>
 <body>
@@ -40,102 +46,171 @@
 </div>
 
 <header>
-    <div><span class="status-dot online"></span><b style="color: var(--gold);">PRO</b></div>
-    <div class="balance-card">
-        <span id="user-balance" style="font-weight: 800; color: #fbbf24;">0</span> 
-        <small style="color: #94a3b8; font-size: 10px;">UZS</small>
-    </div>
+    <div><b style="color: var(--gold);">PRO</b></div>
+    <div class="balance-card"><span id="user-balance">0</span> UZS</div>
 </header>
 
-<main id="main-scroll">
+<main style="padding: 15px; overflow-y: auto; height: calc(100vh - 140px);">
     <div id="view-lobby">
-        <h3 style="margin: 0 0 15px 5px;">Tanlang:</h3>
-        <div class="game-card" onclick="openGame('mines')">
-            <div class="game-icon">💣</div>
-            <div style="font-size: 20px; font-weight: 800;">MINES</div>
-            <small style="color: #94a3b8;">Server-Side Random v2.0</small>
+        <div style="background: var(--panel); border-radius: 15px; padding: 20px; margin-bottom: 15px; text-align: center;" onclick="showGame('mines')">
+            <div style="font-size: 40px;">💣</div>
+            <h3>MINES</h3>
         </div>
-        <div class="game-card" onclick="openGame('aviator')">
-            <div class="game-icon">🚀</div>
-            <div style="font-size: 20px; font-weight: 800;">AVIATOR</div>
-            <small style="color: #94a3b8;">Live Crash System</small>
+        <div style="background: var(--panel); border-radius: 15px; padding: 20px; text-align: center;" onclick="showGame('aviator')">
+            <div style="font-size: 40px;">🚀</div>
+            <h3>AVIATOR</h3>
         </div>
     </div>
 
-    <div id="view-game" class="hidden">
-        <button onclick="backToLobby()" style="background:none; border:none; color:#94a3b8; margin-bottom:15px;">⬅️ Lobbi</button>
-        <div id="game-engine-render"></div>
+    <div id="game-mines" class="hidden">
+        <button onclick="showLobby()" style="color:#94a3b8; background:none; border:none;">⬅️ Orqaga</button>
+        <div class="mines-grid" id="mines-board"></div>
+        <input type="number" id="bet-mines" class="bet-input" placeholder="Tikish miqdori (UZS)">
+        <button id="btn-mines-start" class="btn btn-bet" onclick="startMines()">O'YINNI BOSHLASH</button>
+    </div>
+
+    <div id="game-aviator" class="hidden">
+        <button onclick="showLobby()" style="color:#94a3b8; background:none; border:none;">⬅️ Orqaga</button>
+        <div class="aviator-screen">
+            <div id="coefficient">1.00x</div>
+            <div id="plane">🚀</div>
+        </div>
+        <input type="number" id="bet-aviator" class="bet-input" placeholder="Tikish miqdori (UZS)">
+        <button id="btn-aviator" class="btn btn-bet" onclick="startAviator()">TIKISH</button>
     </div>
 </main>
 
-<footer>
-    <div class="nav-btn nav-active">🏠<br>Asosiy</div>
-    <div class="nav-btn">🎁<br>Bonus</div>
-    <div class="nav-btn">👤<br>Profil</div>
-</footer>
-
 <script>
     let tg = window.Telegram.WebApp;
-    tg.expand();
+    const SERVER_URL = "https://justa-recriminative-nonrequisitely.ngrok-free.dev";
+    let balance = 0;
+    let currentBet = 0;
+    let isPlaying = false;
 
-    // YANGILANGAN NGROK HAVOLASI
-    const SERVER_URL = "https://justa-recriminative-nonrequisitely.ngrok-free.dev"; 
-
-    let userData = {
-        user_id: tg.initDataUnsafe.user?.id || 7425396576,
-        username: tg.initDataUnsafe.user?.first_name || "O'yinchi"
-    };
-
-    async function initLogin() {
+    // --- Core Logic ---
+    async function init() {
         try {
-            const response = await fetch(`${SERVER_URL}/login`, {
+            const res = await fetch(`${SERVER_URL}/login`, {
                 method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(userData)
+                headers: {"Content-Type":"application/json"},
+                body: JSON.stringify({user_id: tg.initDataUnsafe.user?.id || 123, username: tg.initDataUnsafe.user?.first_name || "User"})
             });
-            const data = await response.json();
-            if(data.status === "success") {
-                document.getElementById('user-balance').innerText = data.balance.toLocaleString();
-                setTimeout(() => document.getElementById('auth-screen').classList.add('hidden'), 1000);
-            }
-        } catch (e) {
-            console.error("Ulanishda xato:", e);
-            document.getElementById('auth-status').innerText = "Xato: Server o'chiq!";
-            document.getElementById('auth-status').style.color = "red";
-        }
-    }
-
-    async function syncBalance(amount) {
-        try {
-            await fetch(`${SERVER_URL}/update_balance`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ user_id: userData.user_id, amount: amount })
-            });
-            refreshBalance();
-        } catch (e) { console.log("Balans yangilanmadi"); }
-    }
-
-    async function refreshBalance() {
-        try {
-            const res = await fetch(`${SERVER_URL}/get_balance/${userData.user_id}`);
             const data = await res.json();
-            document.getElementById('user-balance').innerText = data.balance.toLocaleString();
-        } catch (e) { console.log("Balansni olib bo'lmadi"); }
+            balance = data.balance;
+            updateUI();
+            document.getElementById('auth-screen').classList.add('hidden');
+        } catch(e) { document.getElementById('auth-status').innerText = "Server xatosi!"; }
     }
 
-    function openGame(type) {
+    function updateUI() { document.getElementById('user-balance').innerText = balance.toLocaleString(); }
+
+    function showGame(name) {
         document.getElementById('view-lobby').classList.add('hidden');
-        document.getElementById('view-game').classList.remove('hidden');
-        alert(type + " o'yini serverdan yuklanmoqda...");
+        document.getElementById(`game-${name}`).classList.remove('hidden');
+        if(name === 'mines') buildMinesBoard();
     }
 
-    function backToLobby() {
-        document.getElementById('view-game').classList.add('hidden');
+    function showLobby() {
+        document.querySelectorAll('main > div').forEach(d => d.classList.add('hidden'));
         document.getElementById('view-lobby').classList.remove('hidden');
     }
 
-    window.onload = initLogin;
+    // --- Mines Logic ---
+    let bombList = [];
+    function buildMinesBoard() {
+        const board = document.getElementById('mines-board');
+        board.innerHTML = '';
+        for(let i=0; i<25; i++) {
+            let cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.onclick = () => openCell(i, cell);
+            board.appendChild(cell);
+        }
+    }
+
+    async function startMines() {
+        let bet = parseInt(document.getElementById('bet-mines').value);
+        if(bet > balance || isNaN(bet)) return alert("Mablag' yetarli emas!");
+        currentBet = bet;
+        balance -= bet;
+        updateUI();
+        isPlaying = true;
+        const res = await fetch(`${SERVER_URL}/mines/generate`);
+        const data = await res.json();
+        bombList = data.bombs;
+        document.getElementById('btn-mines-start').innerText = "CASHOUT (1.2x)";
+        document.getElementById('btn-mines-start').onclick = cashoutMines;
+        document.getElementById('btn-mines-start').className = "btn btn-cashout";
+    }
+
+    function openCell(index, el) {
+        if(!isPlaying) return;
+        if(bombList.includes(index)) {
+            el.innerHTML = "💣"; el.className = "cell bomb";
+            isPlaying = false;
+            alert("BOOM! Yutqazdingiz.");
+            location.reload();
+        } else {
+            el.innerHTML = "💎"; el.className = "cell opened";
+            // Oddiy mantiq: Har bir yulduzcha balansga ozroq qo'shadi (Simulyatsiya)
+        }
+    }
+
+    async function cashoutMines() {
+        let win = Math.round(currentBet * 1.5);
+        await fetch(`${SERVER_URL}/update_balance`, {
+            method:"POST", headers:{"Content-Type":"application/json"},
+            body: JSON.stringify({user_id: tg.initDataUnsafe.user.id, amount: win})
+        });
+        alert(`G'alaba! ${win} UZS qo'shildi.`);
+        location.reload();
+    }
+
+    // --- Aviator Logic ---
+    async function startAviator() {
+        let bet = parseInt(document.getElementById('bet-aviator').value);
+        if(bet > balance || isNaN(bet)) return alert("Mablag' yetarli emas!");
+        
+        const res = await fetch(`${SERVER_URL}/aviator/crash_point`);
+        const data = await res.json();
+        const crashAt = data.crash_at;
+
+        balance -= bet; updateUI();
+        let btn = document.getElementById('btn-aviator');
+        btn.innerText = "CASHOUT"; btn.className = "btn btn-cashout";
+        
+        let currentCoeff = 1.00;
+        let plane = document.getElementById('plane');
+        let coeffDisp = document.getElementById('coefficient');
+
+        let interval = setInterval(() => {
+            currentCoeff += 0.01;
+            coeffDisp.innerText = currentCoeff.toFixed(2) + "x";
+            plane.style.bottom = (20 + currentCoeff * 10) + "px";
+            plane.style.left = (20 + currentCoeff * 10) + "px";
+
+            if(currentCoeff >= crashAt) {
+                clearInterval(interval);
+                coeffDisp.style.color = "red";
+                btn.innerText = "FLEW AWAY!";
+                btn.disabled = true;
+                setTimeout(() => location.reload(), 2000);
+            }
+        }, 100);
+
+        btn.onclick = async () => {
+            clearInterval(interval);
+            let win = Math.round(bet * currentCoeff);
+            await fetch(`${SERVER_URL}/update_balance`, {
+                method:"POST", headers:{"Content-Type":"application/json"},
+                body: JSON.stringify({user_id: tg.initDataUnsafe.user.id, amount: win})
+            });
+            alert(`YUTDINGIZ! ${win} UZS`);
+            location.reload();
+        };
+    }
+
+    window.onload = init;
 </script>
 </body>
 </html>
