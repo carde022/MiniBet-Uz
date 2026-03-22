@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniBet Uz | Mines</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h2 style="text-align: center; color: var(--green);">💣 MINES</h2>
+            <p style="text-align: center;">Koeffitsiyent: <span id="multi">1.00x</span></p>
+            
+            <input type="number" id="bet" value="1000" placeholder="Tikish miqdori">
+            <select id="mines-count">
+                <option value="3">3 ta mina</option>
+                <option value="5">5 ta mina</option>
+                <option value="10">10 ta mina</option>
+            </select>
+
+            <button id="start-btn" class="btn btn-success" onclick="startGame()">O'YINNI BOSHLASH</button>
+            <button id="cashout-btn" class="btn btn-primary" style="display:none;" onclick="cashOut()">CASHOUT</button>
+
+            <div class="mines-grid" id="grid"></div>
+            <div id="status" style="text-align:center; margin-top:10px;"></div>
+        </div>
+        <button class="btn btn-primary" onclick="location.href='main.html'" style="opacity: 0.6;">ORQAGA</button>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/mines.js"></script>
+</body>
+</html>

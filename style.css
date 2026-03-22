@@ -1,0 +1,25 @@
+:root { --blue: #004a99; --green: #28a745; --bg: #1a2a3a; --card: #243447; --text: #ffffff; }
+body { font-family: 'Segoe UI', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 0; }
+.container { max-width: 450px; margin: 0 auto; padding: 15px; }
+
+/* Tugmalar */
+.btn { width: 100%; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; margin-top: 10px; }
+.btn-primary { background: var(--blue); color: white; }
+.btn-success { background: var(--green); color: white; }
+
+/* Inputlar */
+input, select { width: 100%; padding: 12px; margin-bottom: 10px; background: #141f2b; border: 1px solid #34495e; color: white; border-radius: 8px; box-sizing: border-box; }
+
+/* Karta (Card) */
+.card { background: var(--card); border-radius: 15px; padding: 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+
+/* Bosh sahifa (Main) elementlari */
+.banner { height: 120px; background: linear-gradient(45deg, #1e3c72, #2a5298); border-radius: 15px; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+.game-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.game-item { text-align: center; background: var(--card); padding: 10px; border-radius: 10px; cursor: pointer; }
+.game-item i { font-size: 30px; display: block; margin-bottom: 5px; color: var(--blue); }
+
+/* Mines Gridi */
+.mines-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin: 15px 0; }
+.cell { aspect-ratio: 1; background: #2c3e50; border-radius: 5px; border: none; font-size: 20px; color: white; cursor: pointer; }
+.cell.open { background: #141f2b; }

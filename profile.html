@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil | MiniBet Uz</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; align-items: center; margin-bottom: 25px;">
+            <button onclick="location.href='main.html'" style="background: none; border: none; color: white; font-size: 22px; cursor: pointer; margin-right: 15px;">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2 style="margin: 0;">Mening Profilim</h2>
+        </div>
+
+        <div class="card" style="text-align: center;">
+            <div style="width: 80px; height: 80px; background: var(--blue); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px;">
+                <i class="fas fa-user-tie" style="font-size: 40px;"></i>
+            </div>
+            <h3 id="user-name">Foydalanuvchi</h3>
+            <p style="color: #888;">ID: <span id="user-id">000000</span></p>
+            <div style="background: #141f2b; padding: 15px; border-radius: 10px; margin-top: 20px;">
+                <p style="margin: 0; font-size: 14px; color: #aaa;">Asosiy balans</p>
+                <h2 style="margin: 5px 0; color: #f1c40f;"><span id="user-balance">0</span> UZS</h2>
+            </div>
+            
+            <button class="btn" style="background: #e74c3c; margin-top: 30px;" onclick="localStorage.clear(); location.href='index.html'">
+                <i class="fas fa-sign-out-alt"></i> CHIQISH
+            </button>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        async function loadProfile() {
+            const id = localStorage.getItem("my_tg_id");
+            try {
+                const data = await request(`/api/user/me/${id}`);
+                document.getElementById('user-name').innerText = data.first_name;
+                document.getElementById('user-id').innerText = data.tg_id;
+                document.getElementById('user-balance').innerText = data.balance.toLocaleString();
+            } catch(e) { alert("Profil yuklanmadi"); }
+        }
+        loadProfile();
+    </script>
+</body>
+</html>

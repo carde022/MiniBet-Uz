@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniBet Uz | Kirish</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/water.css@2/out/dark.css">
+</head>
+<body style="background:#1a2a3a; display:flex; align-items:center; justify-content:center; height:100vh; margin:0;">
+    <div style="background:#243447; padding:30px; border-radius:15px; width:100%; max-width:350px; text-align:center;">
+        <h2 style="color:#28a745;">MiniBet Uz</h2>
+        <div id="reg-form">
+            <input type="text" id="fn" placeholder="Ism">
+            <input type="number" id="tg" placeholder="Telegram ID">
+            <button onclick="handleAuth()" style="width:100%; background:#28a745;">KIRISH / REGISTRATSIYA</button>
+        </div>
+        <p id="msg" style="color:red; font-size:12px; margin-top:10px;"></p>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script>
+        // Agar keshda bo'lsa, darrov o'tkazvor
+        if (localStorage.getItem("my_tg_id")) {
+            window.location.href = "main.html";
+        }
+
+        async function handleAuth() {
+            const tg_id = document.getElementById('tg').value;
+            const name = document.getElementById('fn').value;
+            const msg = document.getElementById('msg');
+
+            try {
+                // Oddiygina registratsiya (Backendga yuborish)
+                await request("/api/auth/register", "POST", {
+                    first_name: name,
+                    tg_id: tg_id,
+                    email: name + "@mail.com", // Vaqtincha
+                    password: "123" 
+                });
+                
+                localStorage.setItem("my_tg_id", tg_id);
+                window.location.href = "main.html";
+            } catch (e) {
+                // Agar band bo'lsa ham kirib ketaveramiz (Login o'rniga)
+                localStorage.setItem("my_tg_id", tg_id);
+                window.location.href = "main.html";
+            }
+        }
+    </script>
+</body>
+</html>

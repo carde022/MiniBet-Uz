@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MiniBet Uz | Mines</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; align-items: center; margin-bottom: 15px; padding: 10px;">
+            <button onclick="location.href='main.html'" style="background: none; border: none; color: white; font-size: 22px; cursor: pointer; margin-right: 15px;">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <h2 style="margin: 0; color: var(--green);">💣 MINES</h2>
+        </div>
+
+        <div class="card">
+            <p style="text-align: center; font-size: 18px;">Koeffitsiyent: <span id="multi" style="font-weight:bold; color:#f1c40f;">1.00x</span></p>
+            
+            <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                <input type="number" id="bet" value="1000" style="flex: 2;" placeholder="Stavka">
+                <select id="mines-count" style="flex: 1;">
+                    <option value="3">3 Mina</option>
+                    <option value="5">5 Mina</option>
+                    <option value="10">10 Mina</option>
+                </select>
+            </div>
+
+            <button id="start-btn" class="btn btn-success" onclick="startGame()">O'YINNI BOSHLASH</button>
+            <button id="cashout-btn" class="btn btn-primary" style="display:none;" onclick="cashOut()">PULNI YECHISH (CASHOUT)</button>
+
+            <div class="mines-grid" id="grid"></div>
+            
+            <div id="status" style="text-align:center; margin-top:15px; min-height: 20px;"></div>
+        </div>
+    </div>
+
+    <script src="js/api.js"></script>
+    <script src="js/mines.js"></script>
+</body>
+</html>
